@@ -2,7 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../models/organization.dart';
+import 'models/organization.dart';
 
 class OrganizationSlab extends StatelessWidget {
   final Organization org;
@@ -34,12 +34,7 @@ class OrganizationSlab extends StatelessWidget {
                     tag: 'org-logo-${org.name}',
                     child: _buildLogoOrText(70), // Larger logo
                   ),
-                  
-                  // NEW: Display the background image here
-                  _buildBackgroundImage(),
-
-                  const SizedBox(height: 8), // Adjusted spacing
-
+                  const SizedBox(height: 24),
                   Text(
                     org.addressString,
                     textAlign: TextAlign.center,
@@ -84,30 +79,6 @@ class OrganizationSlab extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-    );
-  }
-  
-  // NEW: Helper widget to build the background image view
-  Widget _buildBackgroundImage() {
-    final hasBackground = org.localBackgroundPath != null && File(org.localBackgroundPath!).existsSync();
-
-    // If there's no background image, return an empty box.
-    if (!hasBackground) {
-      return const SizedBox(height: 24);
-    }
-
-    // If it exists, return it with padding and rounded corners.
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.0),
-        child: Image.file(
-          File(org.localBackgroundPath!),
-          height: 150, // Give it a nice, fixed height
-          width: double.infinity, // Make it take the full width of the slab
-          fit: BoxFit.cover,
-        ),
-      ),
     );
   }
 }

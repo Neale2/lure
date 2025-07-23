@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'organization.dart';
+import 'models/app_data.dart';
+import 'models/organization.dart';
 
 class CachingService {
   final String _baseUrl = 'https://neale2.github.io/lure/data/';
@@ -33,7 +34,7 @@ class CachingService {
 
   // --- Public Methods ---
 
-  Future<List<Organization>?> getOrganizations() async {
+  Future<AppData?> getAppData() async {
     await _checkForJsonUpdates();
 
     final jsonFile = await _localJsonFile;
@@ -43,12 +44,11 @@ class CachingService {
       final jsonString = await jsonFile.readAsString();
       final jsonData = json.decode(jsonString);
       
-      final List<dynamic> orgsJson = jsonData['orgs'];
-      final organizations = orgsJson.map((json) => Organization.fromJson(json)).toList();
+      final appData = AppData.fromJson(jsonData);
       
-      await _cacheOrganizationAssets(organizations); // UPDATED method call
+      await _cacheOrganizationAssets(appData.organizations);
 
-      return organizations;
+      return appData;
     } catch (e) {
       print("Error reading or parsing JSON: $e");
       return null;
@@ -83,36 +83,20 @@ class CachingService {
     }
   }
 
-  // UPDATED: Now caches both logo and icon
   Future<void> _cacheOrganizationAssets(List<Organization> organizations) async {
     final imagesDir = await _localImagesDir;
-
     for (var org in organizations) {
-      // Cache logo
-      await _cacheAsset(org.logo, imagesDir, (localPath) {
-        org.localLogoPath = localPath;
-      });
-      // Cache icon
-      await _cacheAsset(org.icon, imagesDir, (localPath) {
-        org.localIconPath = localPath;
-      });
-      // NEW: Cache background
-      await _cacheAsset(org.background, imagesDir, (localPath) {
-        org.localBackgroundPath = localPath;
-      });
+      await _cacheAsset(org.logo, imagesDir, (localPath) => org.localLogoPath = localPath);
+      await _cacheAsset(org.icon, imagesDir, (localPath) => org.localIconPath = localPath);
+      await _cacheAsset(org.background, imagesDir, (localPath) => org.localBackgroundPath = localPath);
     }
   }
 
-
-  // NEW: Helper function to avoid duplicating caching logic
   Future<void> _cacheAsset(String remotePath, Directory imageDir, Function(String) onSetLocalPath) async {
       if (remotePath.isEmpty) return;
-
       final fileName = remotePath.split('/').last;
       final localFile = File('${imageDir.path}/$fileName');
-      
       onSetLocalPath(localFile.path);
-
       if (!await localFile.exists()) {
         try {
           final imageUrl = '$_baseUrl$remotePath';
