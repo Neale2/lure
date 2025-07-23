@@ -10,6 +10,9 @@ import 'models/organization.dart';
 class CachingService {
   final String _baseUrl = 'https://neale2.github.io/lure/data/';
   final String _jsonUrl = 'https://neale2.github.io/lure/data/data.json';
+  
+  // Define the asset path as a constant to avoid typos.
+  static const String _mbtilesAssetPath = 'assets/map.mbtiles';
 
   // --- File System Helpers ---
 
@@ -56,6 +59,15 @@ class CachingService {
   }
 
   Future<void> clearCache() async {
+    await _clearAppDataCache();
+    await _clearMapCache();
+    print("Full application cache cleared successfully.");
+  }
+  
+  // --- Internal Caching Logic ---
+  
+  // The old logic from clearCache is now in its own helper.
+  Future<void> _clearAppDataCache() async {
     try {
       final jsonFile = await _localJsonFile;
       if (await jsonFile.exists()) await jsonFile.delete();
@@ -63,14 +75,29 @@ class CachingService {
       final imagesDir = await _localImagesDir;
       if (await imagesDir.exists()) await imagesDir.delete(recursive: true);
       
-      print("Cache cleared successfully.");
+      print("App data cache (JSON, images) cleared.");
     } catch (e) {
-      print("Error clearing cache: $e");
+      print("Error clearing app data cache: $e");
     }
   }
 
-  // --- Internal Caching Logic ---
+  // NEW: This method specifically handles deleting the map cache.
+  Future<void> _clearMapCache() async {
+    try {
+      // The path logic here MUST match the logic in `mbtiles_tile_provider.dart`.
+      final documentsDirectory = await getApplicationDocumentsDirectory();
+      final dbPath = '${documentsDirectory.path}/$_mbtilesAssetPath';
+      final dbFile = File(dbPath);
 
+      if (await dbFile.exists()) {
+        await dbFile.delete();
+        print("Map cache (copied .mbtiles file) cleared.");
+      }
+    } catch (e) {
+      print("Error clearing map cache: $e");
+    }
+  }
+  
   Future<void> _checkForJsonUpdates() async {
     try {
       final response = await http.get(Uri.parse(_jsonUrl));
