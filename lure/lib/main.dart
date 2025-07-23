@@ -1,9 +1,9 @@
 // lib/main.dart
 
-import 'dart:io'; // Required for File
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'caching_service.dart';
-import 'organization.dart'; // Import the model
+import 'organization.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +29,7 @@ class JsonHomePage extends StatefulWidget {
 
 class _JsonHomePageState extends State<JsonHomePage> {
   String _status = "Initializing...";
-  List<Organization>? _organizations; // UPDATED: Use a typed list
+  List<Organization>? _organizations;
   final CachingService _cachingService = CachingService();
 
   @override
@@ -38,20 +38,16 @@ class _JsonHomePageState extends State<JsonHomePage> {
     _loadData();
   }
 
-  // UPDATED: Renamed to be more descriptive
   Future<void> _loadData() async {
     setState(() {
       _status = "Loading data...";
-      _organizations = null; // Clear old data
+      _organizations = null;
     });
 
     final orgs = await _cachingService.getOrganizations();
 
     if (orgs != null && orgs.isNotEmpty) {
-      setState(() {
-        _organizations = orgs;
-        _status = "Data loaded successfully.";
-      });
+      setState(() => _organizations = orgs);
     } else {
       setState(() => _status = "No data available. Pull to refresh.");
     }
@@ -89,50 +85,41 @@ class _JsonHomePageState extends State<JsonHomePage> {
           ),
         ],
       ),
-      body: _buildBody(), // UPDATED: Use a builder method for the body
+      body: _buildBody(),
     );
   }
 
-  // NEW: Widget builder for the main content
   Widget _buildBody() {
-    // If the list is null or empty, show the status message
-    if (_organizations == null || _organizations!.isEmpty) {
+    if (_organizations == null) {
+      return Center(child: Text(_status));
+    }
+    if (_organizations!.isEmpty) {
       return Center(child: Text(_status));
     }
 
-    // Otherwise, build the list view
     return ListView.builder(
       itemCount: _organizations!.length,
       itemBuilder: (context, index) {
         final org = _organizations![index];
-        
-        // Check if the local image path is valid and the file exists
-        final imageFile = (org.localLogoPath != null) ? File(org.localLogoPath!) : null;
-        final canDisplayImage = imageFile != null && imageFile.existsSync();
-
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
-                // Display the image
-                SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: canDisplayImage
-                      ? Image.file(imageFile!) // Load image from the local file
-                      : Container(
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.image_not_supported),
-                        ),
-                ),
+                _buildCachedImage(org.localLogoPath, isLogo: true), // Logo
                 const SizedBox(width: 16),
-                // Display the name
                 Expanded(
-                  child: Text(
-                    org.name,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  child: Column( // Use a Column for name and icon
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        org.name,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      _buildCachedImage(org.localIconPath, isLogo: false), // Icon
+                    ],
                   ),
                 ),
               ],
@@ -140,6 +127,30 @@ class _JsonHomePageState extends State<JsonHomePage> {
           ),
         );
       },
+    );
+  }
+
+  // NEW: Refactored image loading into a helper widget
+  Widget _buildCachedImage(String? path, {required bool isLogo}) {
+    final double size = isLogo ? 80.0 : 24.0;
+    final iconOnFail = isLogo ? Icons.business : Icons.info_outline;
+
+    if (path == null) {
+      return SizedBox(width: size, height: size);
+    }
+
+    final imageFile = File(path);
+    final canDisplayImage = imageFile.existsSync();
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: canDisplayImage
+          ? Image.file(imageFile)
+          : Container(
+              color: Colors.grey[200],
+              child: Icon(iconOnFail, color: Colors.grey[600]),
+            ),
     );
   }
 }

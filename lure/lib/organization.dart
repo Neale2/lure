@@ -2,22 +2,27 @@
 
 class Organization {
   final String name;
-  final String logo; // This is the remote filename, e.g., "images/peter_logo.png"
+  final String logo; // e.g., "images/peter_logo.png"
+  final String icon; // NEW: e.g., "images/peter_icon.png"
   
-  // This will hold the path to the image on the device after it's cached
+  // These will hold the paths to the images on the device after they're cached
   String? localLogoPath; 
+  String? localIconPath; // NEW
 
   Organization({
     required this.name,
     required this.logo,
+    required this.icon, // NEW
     this.localLogoPath,
+    this.localIconPath, // NEW
   });
 
-  // A factory constructor for creating a new Organization instance from a map.
+  // Update the factory to parse the new 'icon' field
   factory Organization.fromJson(Map<String, dynamic> json) {
     return Organization(
       name: json['name'] as String,
       logo: json['logo'] as String,
+      icon: json['icon'] as String, // NEW
     );
   }
 }

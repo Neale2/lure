@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'organization.dart'; // Import the new model
+import 'organization.dart';
 
 class CachingService {
   final String _baseUrl = 'https://neale2.github.io/lure/data/';
@@ -25,7 +25,6 @@ class CachingService {
   Future<Directory> get _localImagesDir async {
     final path = await _localPath;
     final dir = Directory('$path/images');
-    // Create the directory if it doesn't exist
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
@@ -34,14 +33,11 @@ class CachingService {
 
   // --- Public Methods ---
 
-  // UPDATED: This is the main method the UI will call
   Future<List<Organization>?> getOrganizations() async {
     await _checkForJsonUpdates();
 
     final jsonFile = await _localJsonFile;
-    if (!await jsonFile.exists()) {
-      return null; // No data available
-    }
+    if (!await jsonFile.exists()) return null;
 
     try {
       final jsonString = await jsonFile.readAsString();
@@ -50,8 +46,7 @@ class CachingService {
       final List<dynamic> orgsJson = jsonData['orgs'];
       final organizations = orgsJson.map((json) => Organization.fromJson(json)).toList();
       
-      // After parsing, trigger image caching
-      await _cacheImages(organizations);
+      await _cacheOrganizationAssets(organizations); // UPDATED method call
 
       return organizations;
     } catch (e) {
@@ -63,14 +58,11 @@ class CachingService {
   Future<void> clearCache() async {
     try {
       final jsonFile = await _localJsonFile;
-      if (await jsonFile.exists()) {
-        await jsonFile.delete();
-      }
+      if (await jsonFile.exists()) await jsonFile.delete();
       
       final imagesDir = await _localImagesDir;
-      if (await imagesDir.exists()) {
-        await imagesDir.delete(recursive: true); // Delete the whole images folder
-      }
+      if (await imagesDir.exists()) await imagesDir.delete(recursive: true);
+      
       print("Cache cleared successfully.");
     } catch (e) {
       print("Error clearing cache: $e");
@@ -83,9 +75,7 @@ class CachingService {
     try {
       final response = await http.get(Uri.parse(_jsonUrl));
       if (response.statusCode == 200) {
-        final remoteJson = response.body;
-        final file = await _localJsonFile;
-        await file.writeAsString(remoteJson);
+        await (await _localJsonFile).writeAsString(response.body);
         print("JSON data updated from server.");
       }
     } catch (e) {
@@ -93,30 +83,42 @@ class CachingService {
     }
   }
 
-  // NEW: Handles downloading and saving images
-  Future<void> _cacheImages(List<Organization> organizations) async {
+  // UPDATED: Now caches both logo and icon
+  Future<void> _cacheOrganizationAssets(List<Organization> organizations) async {
     final imagesDir = await _localImagesDir;
 
     for (var org in organizations) {
-      final fileName = org.logo.split('/').last; // "images/peter_logo.png" -> "peter_logo.png"
-      final localFile = File('${imagesDir.path}/$fileName');
+      // Cache logo
+      await _cacheAsset(org.logo, imagesDir, (localPath) {
+        org.localLogoPath = localPath;
+      });
+      // Cache icon
+      await _cacheAsset(org.icon, imagesDir, (localPath) {
+        org.localIconPath = localPath;
+      });
+    }
+  }
+
+  // NEW: Helper function to avoid duplicating caching logic
+  Future<void> _cacheAsset(String remotePath, Directory imageDir, Function(String) onSetLocalPath) async {
+      if (remotePath.isEmpty) return;
+
+      final fileName = remotePath.split('/').last;
+      final localFile = File('${imageDir.path}/$fileName');
       
-      // Set the local path on the model regardless of whether it exists
-      // The UI will use this path to load the image
-      org.localLogoPath = localFile.path;
+      onSetLocalPath(localFile.path);
 
       if (!await localFile.exists()) {
         try {
-          final imageUrl = '$_baseUrl${org.logo}';
+          final imageUrl = '$_baseUrl$remotePath';
           final response = await http.get(Uri.parse(imageUrl));
           if (response.statusCode == 200) {
             await localFile.writeAsBytes(response.bodyBytes);
-            print("Cached image: $fileName");
+            print("Cached asset: $fileName");
           }
         } catch (e) {
-          print("Could not cache image for ${org.name}: $e");
+          print("Could not cache asset $fileName: $e");
         }
       }
-    }
   }
 }
