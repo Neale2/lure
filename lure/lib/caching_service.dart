@@ -96,8 +96,13 @@ class CachingService {
       await _cacheAsset(org.icon, imagesDir, (localPath) {
         org.localIconPath = localPath;
       });
+      // NEW: Cache background
+      await _cacheAsset(org.background, imagesDir, (localPath) {
+        org.localBackgroundPath = localPath;
+      });
     }
   }
+
 
   // NEW: Helper function to avoid duplicating caching logic
   Future<void> _cacheAsset(String remotePath, Directory imageDir, Function(String) onSetLocalPath) async {

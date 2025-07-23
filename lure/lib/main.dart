@@ -1,9 +1,9 @@
 // lib/main.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'caching_service.dart';
 import 'organization.dart';
+import 'organization_card.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      title: 'Business Directory',
       home: JsonHomePage(),
     );
   }
@@ -46,10 +47,12 @@ class _JsonHomePageState extends State<JsonHomePage> {
 
     final orgs = await _cachingService.getOrganizations();
 
-    if (orgs != null && orgs.isNotEmpty) {
-      setState(() => _organizations = orgs);
-    } else {
-      setState(() => _status = "No data available. Pull to refresh.");
+    if (mounted) {
+      if (orgs != null && orgs.isNotEmpty) {
+        setState(() => _organizations = orgs);
+      } else {
+        setState(() => _status = "No data available. Check connection and pull to refresh.");
+      }
     }
   }
 
@@ -71,7 +74,7 @@ class _JsonHomePageState extends State<JsonHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cached Businesses"),
+        title: const Text("Business Directory"),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -91,66 +94,36 @@ class _JsonHomePageState extends State<JsonHomePage> {
 
   Widget _buildBody() {
     if (_organizations == null) {
-      return Center(child: Text(_status));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(_status),
+          ],
+        ),
+      );
     }
     if (_organizations!.isEmpty) {
       return Center(child: Text(_status));
     }
 
-    return ListView.builder(
-      itemCount: _organizations!.length,
-      itemBuilder: (context, index) {
-        final org = _organizations![index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                _buildCachedImage(org.localLogoPath, isLogo: true), // Logo
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column( // Use a Column for name and icon
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        org.name,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      _buildCachedImage(org.localIconPath, isLogo: false), // Icon
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // NEW: Refactored image loading into a helper widget
-  Widget _buildCachedImage(String? path, {required bool isLogo}) {
-    final double size = isLogo ? 80.0 : 24.0;
-    final iconOnFail = isLogo ? Icons.business : Icons.info_outline;
-
-    if (path == null) {
-      return SizedBox(width: size, height: size);
-    }
-
-    final imageFile = File(path);
-    final canDisplayImage = imageFile.existsSync();
-
-    return SizedBox(
-      width: size,
-      height: size,
-      child: canDisplayImage
-          ? Image.file(imageFile)
-          : Container(
-              color: Colors.grey[200],
-              child: Icon(iconOnFail, color: Colors.grey[600]),
-            ),
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView.builder(
+        itemCount: _organizations!.length,
+        itemBuilder: (context, index) {
+          final org = _organizations![index];
+          
+          return OrganizationCard(
+            name: org.name,
+            logoPath: org.localLogoPath,
+            iconPath: org.localIconPath,
+            backgroundPath: org.localBackgroundPath,
+          );
+        },
+      ),
     );
   }
 }

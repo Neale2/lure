@@ -2,27 +2,30 @@
 
 class Organization {
   final String name;
-  final String logo; // e.g., "images/peter_logo.png"
-  final String icon; // NEW: e.g., "images/peter_icon.png"
+  final String logo;
+  final String icon;
+  final String background;
   
-  // These will hold the paths to the images on the device after they're cached
   String? localLogoPath; 
-  String? localIconPath; // NEW
+  String? localIconPath;
+  String? localBackgroundPath;
 
   Organization({
     required this.name,
     required this.logo,
-    required this.icon, // NEW
+    required this.icon,
+    required this.background,
     this.localLogoPath,
-    this.localIconPath, // NEW
+    this.localIconPath,
+    this.localBackgroundPath,
   });
 
-  // Update the factory to parse the new 'icon' field
   factory Organization.fromJson(Map<String, dynamic> json) {
     return Organization(
       name: json['name'] as String,
       logo: json['logo'] as String,
-      icon: json['icon'] as String, // NEW
+      icon: json['icon'] as String,
+      background: json['background'] as String,
     );
   }
 }
