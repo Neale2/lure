@@ -1,0 +1,90 @@
+{
+  "orgs": [
+    {
+      "name": "Pete's Pizza",
+      "cat": "food",
+      "address": {
+        "string": "42 street",
+        "lat": -41.274460567,
+        "long": 173.283585502
+      },
+      "logo": "images/pete_logo",
+      "icon": "images/pete_icon",
+      "text_colour": "#000000",
+      "card_colour": "#ff0000",
+      "message": "We have a 10% discount on Saturdays!"
+    },
+    {
+      "name": "Harbor Books",
+      "cat": "retail",
+      "address": {
+        "string": "12 Anchor Lane",
+        "lat": -41.274200000,
+        "long": 173.283700000
+      },
+      "logo": "images/harbor_books_logo",
+      "icon": "images/harbor_books_icon",
+      "text_colour": "#333333",
+      "card_colour": "#f4e842",
+      "message": "Buy one, get one free on all fiction titles this week."
+    },
+    {
+      "name": "Seaview Dental",
+      "cat": "service",
+      "address": {
+        "string": "7 Marine Drive",
+        "lat": -41.274800000,
+        "long": 173.283300000
+      },
+      "logo": "images/seaview_dental_logo",
+      "icon": "images/seaview_dental_icon",
+      "text_colour": "#ffffff",
+      "card_colour": "#0077cc",
+      "message": "New patients receive a complimentary dental kit."
+    },
+    {
+      "name": "The Daily Bean",
+      "cat": "food",
+      "address": {
+        "string": "15 Wharf Road",
+        "lat": -41.274600000,
+        "long": 173.283800000
+      },
+      "logo": "images/daily_bean_logo",
+      "icon": "images/daily_bean_icon",
+      "text_colour": "#000000",
+      "card_colour": "#d2691e",
+      "message": "Free pastry with any large coffee before 10 a.m."
+    },
+    {
+      "name": "Coastal Crafts",
+      "cat": "retail",
+      "address": {
+        "string": "3 Bayview Street",
+        "lat": -41.274100000,
+        "long": 173.283400000
+      },
+      "logo": "images/coastal_crafts_logo",
+      "icon": "images/coastal_crafts_icon",
+      "text_colour": "#222222",
+      "card_colour": "#98fb98",
+      "message": "Handmade gift sets 15% off this weekend only."
+    },
+    {
+      "name": "Harbor Wellness",
+      "cat": "service",
+      "address": {
+        "string": "18 Dockside Avenue",
+        "lat": -41.273900000,
+        "long": 173.283600000
+      },
+      "logo": "images/harbor_wellness_logo",
+      "icon": "images/harbor_wellness_icon",
+      "text_colour": "#ffffff",
+      "card_colour": "#8a2be2",
+      "message": "Book two massages and get the third free."
+    }
+  ],
+  "cats": ["food", "retail", "service"]
+}
+
