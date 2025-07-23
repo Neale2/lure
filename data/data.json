@@ -1,15 +1,15 @@
 {
   "orgs": [
     {
-      "name": "Pete's Pizza",
+      "name": "Peter's Pizza",
       "cat": "food",
       "address": {
         "string": "42 street",
         "lat": -41.274460567,
         "long": 173.283585502
       },
-      "logo": "images/pete_logo",
-      "icon": "images/pete_icon",
+      "logo": "images/peter_logo",
+      "icon": "images/peter_icon",
       "text_colour": "#000000",
       "card_colour": "#ff0000",
       "message": "We have a 10% discount on Saturdays!"
