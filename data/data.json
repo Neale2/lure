@@ -1,20 +1,6 @@
 {
   "orgs": [
     {
-      "name": "Peter's Pizza",
-      "cat": "food",
-      "address": {
-        "string": "42 street",
-        "lat": -41.274460567,
-        "long": 173.283585502
-      },
-      "logo": "images/peter_logo.png",
-      "icon": "images/peter_icon.png",
-      "text_colour": "#000000",
-      "card_colour": "#ff0000",
-      "message": "We have a 10% discount on Saturdays!"
-    },
-    {
       "name": "Harbor Books",
       "cat": "retail",
       "address": {
