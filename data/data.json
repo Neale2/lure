@@ -50,8 +50,8 @@
       "cat": "food",
       "address": {
         "string": "15 Wharf Road",
-        "lat": -41.274600000,
-        "long": 173.283800000
+        "lat": -41.27028,
+        "long": 173.28434
       },
       "logo": "images/daily_bean_logo.png",
       "icon": "images/daily_bean_icon.png",
