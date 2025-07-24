@@ -1,4 +1,4 @@
-// lib/organization_slab.dart
+// lib/widgets/organization_slab.dart
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -29,25 +29,23 @@ class OrganizationSlab extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min, // Make column wrap content
                 children: [
-                  // This Hero widget's tag MUST match the one in the card.
                   Hero(
                     tag: 'org-logo-${org.name}',
-                    child: _buildLogoOrText(70), // Larger logo
+                    child: _buildLogoOrText(70),
                   ),
-                  
-                  // NEW: Display the background image here
                   _buildBackgroundImage(),
+                  const SizedBox(height: 8),
 
-                  const SizedBox(height: 8), // Adjusted spacing
-
+                  // --- THIS IS THE CORRECTED LINE ---
                   Text(
-                    org.addressString,
+                    org.address.string, // Changed from org.addressString
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: org.textColour.withOpacity(0.9),
                       fontSize: 16,
                     ),
                   ),
+                  
                   const SizedBox(height: 16),
                   Text(
                     org.message,
@@ -87,24 +85,22 @@ class OrganizationSlab extends StatelessWidget {
     );
   }
   
-  // NEW: Helper widget to build the background image view
+  // Helper widget to build the background image view
   Widget _buildBackgroundImage() {
     final hasBackground = org.localBackgroundPath != null && File(org.localBackgroundPath!).existsSync();
 
-    // If there's no background image, return an empty box.
     if (!hasBackground) {
       return const SizedBox(height: 24);
     }
 
-    // If it exists, return it with padding and rounded corners.
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12.0),
         child: Image.file(
           File(org.localBackgroundPath!),
-          height: 150, // Give it a nice, fixed height
-          width: double.infinity, // Make it take the full width of the slab
+          height: 150,
+          width: double.infinity,
           fit: BoxFit.cover,
         ),
       ),
