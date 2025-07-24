@@ -58,8 +58,9 @@ class _CardsPageState extends State<CardsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // --- UPDATED ---
       appBar: AppBar(
-        title: const Text("Business Directory"),
+        title: const Text("Nelson Loyalty"),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
@@ -117,7 +118,6 @@ class _CardsPageState extends State<CardsPage> {
       );
     }
 
-    // This combined list is used to determine which panel to open.
     final allPanelKeys = [
       if (recentOrgs.isNotEmpty) _recentsCategoryKey,
       ...widget.appData!.categories

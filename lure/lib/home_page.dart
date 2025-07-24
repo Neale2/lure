@@ -19,12 +19,10 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   static const String _prefsKey = 'last_tab_index';
 
-  // State Management
   String _status = "Initializing...";
   AppData? _appData;
   List<String> _recentOrgNames = [];
   
-  // Services
   final CachingService _cachingService = CachingService();
   final PreferenceService _preferenceService = PreferenceService();
 
@@ -35,12 +33,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _initialize() async {
-    // Load saved preferences first
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
     final lastTabIndex = prefs.getInt(_prefsKey) ?? 0;
     
-    // Load recents from memory
     final recents = await _preferenceService.getRecents();
     if (!mounted) return;
 
@@ -70,7 +66,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _handleCardOpened(Organization org) async {
     await _preferenceService.addRecent(org.name);
-    // Reload the recents from memory to update the UI
     final recents = await _preferenceService.getRecents();
     if (!mounted) return;
     setState(() {
@@ -84,7 +79,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _appData = null;
-      _status = "Cache cleared. Restart or pull to refresh.";
+      _status = "Cache cleared. Please restart the app.";
     });
 
     if (mounted) {
@@ -109,7 +104,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
-      MapPage(organizations: _appData?.organizations),
+      MapPage(
+        organizations: _appData?.organizations,
+        // This is the line that was causing the error.
+        // It passes the function to MapPage.
+        onCardOpened: _handleCardOpened,
+      ),
       CardsPage(
         appData: _appData,
         status: _status,

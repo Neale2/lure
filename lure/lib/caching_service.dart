@@ -11,8 +11,9 @@ class CachingService {
   final String _baseUrl = 'https://neale2.github.io/lure/data/';
   final String _jsonUrl = 'https://neale2.github.io/lure/data/data.json';
   
-  // Define the asset path as a constant to avoid typos.
-  static const String _mbtilesAssetPath = 'assets/map.mbtiles';
+  // Define constants for the new asset paths.
+  static const String _mapAssetPath = 'assets/city.map';
+  static const String _themeAssetPath = 'assets/theme.xml';
 
   // --- File System Helpers ---
 
@@ -66,7 +67,6 @@ class CachingService {
   
   // --- Internal Caching Logic ---
   
-  // The old logic from clearCache is now in its own helper.
   Future<void> _clearAppDataCache() async {
     try {
       final jsonFile = await _localJsonFile;
@@ -81,18 +81,27 @@ class CachingService {
     }
   }
 
-  // NEW: This method specifically handles deleting the map cache.
+  // UPDATED: This method now deletes the .map and .xml files.
   Future<void> _clearMapCache() async {
     try {
-      // The path logic here MUST match the logic in `mbtiles_tile_provider.dart`.
       final documentsDirectory = await getApplicationDocumentsDirectory();
-      final dbPath = '${documentsDirectory.path}/$_mbtilesAssetPath';
-      final dbFile = File(dbPath);
-
-      if (await dbFile.exists()) {
-        await dbFile.delete();
-        print("Map cache (copied .mbtiles file) cleared.");
+      
+      // Delete the copied .map file
+      final mapPath = '${documentsDirectory.path}/$_mapAssetPath';
+      final mapFile = File(mapPath);
+      if (await mapFile.exists()) {
+        await mapFile.delete();
+        print("Map cache (copied .map file) cleared.");
       }
+
+      // Delete the copied .xml theme file
+      final themePath = '${documentsDirectory.path}/$_themeAssetPath';
+      final themeFile = File(themePath);
+      if (await themeFile.exists()) {
+        await themeFile.delete();
+        print("Map theme cache (copied .xml file) cleared.");
+      }
+
     } catch (e) {
       print("Error clearing map cache: $e");
     }

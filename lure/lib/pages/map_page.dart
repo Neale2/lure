@@ -7,10 +7,18 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/organization.dart';
 import '../tile_providers/mbtiles_tile_provider.dart';
+import '../hero_dialog_route.dart';
+import '../widgets/organization_slab.dart';
 
 class MapPage extends StatefulWidget {
   final List<Organization>? organizations;
-  const MapPage({super.key, this.organizations});
+  final Function(Organization) onCardOpened;
+
+  const MapPage({
+    super.key,
+    this.organizations,
+    required this.onCardOpened,
+  });
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -25,14 +33,12 @@ class _MapPageState extends State<MapPage> {
     mbtilesAssetPath: 'assets/map.mbtiles',
   );
 
-  // --- UPDATED COORDINATES AND ZOOM ---
   final LatLng _initialCenter = const LatLng(-41.27244, 173.28393);
-  final double _initialZoom = 18.0;
+  final double _initialZoom = 16.0;
   final LatLngBounds _mapBounds = LatLngBounds(
-    const LatLng(-41.3112, 173.2035), // South-West corner
-    const LatLng(-41.2518, 173.3086), // North-East corner
+    const LatLng(-41.28724, 173.25946),
+    const LatLng(-41.25392, 173.29798),
   );
-  // --- END OF UPDATES ---
 
   @override
   void initState() {
@@ -75,24 +81,32 @@ class _MapPageState extends State<MapPage> {
       width: pinSize,
       height: pinSize,
       alignment: Alignment.center,
-      child: hasIcon
-          ? Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(color: org.cardColour, shape: BoxShape.circle),
-                ),
-                ClipOval(
-                  child: Image.file(
-                    File(org.localIconPath!),
-                    width: 28, height: 28, fit: BoxFit.cover,
+      child: GestureDetector(
+        onTap: () {
+          widget.onCardOpened(org);
+          Navigator.of(context).push(HeroDialogRoute(
+            builder: (context) => OrganizationSlab(org: org),
+          ));
+        },
+        child: hasIcon
+            ? Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(color: org.cardColour, shape: BoxShape.circle),
                   ),
-                ),
-              ],
-            )
-          : Icon(Icons.location_pin, size: pinSize, color: org.cardColour),
+                  ClipOval(
+                    child: Image.file(
+                      File(org.localIconPath!),
+                      width: 28, height: 28, fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              )
+            : Icon(Icons.location_pin, size: pinSize, color: org.cardColour),
+      ),
     );
   }
 
@@ -132,11 +146,32 @@ class _MapPageState extends State<MapPage> {
       ),
     );
   }
+  
+  Widget _buildAttributionWidget() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: const Text(
+            '© OpenStreetMap contributors, © MapTiler',
+            style: TextStyle(color: Colors.black54, fontSize: 10),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Offline Map')),
+      // --- UPDATED ---
+      appBar: AppBar(title: const Text('Nelson Loyalty')),
       body: !_tileProviderReady
           ? const Center(child: CircularProgressIndicator())
           : FlutterMap(
@@ -144,7 +179,6 @@ class _MapPageState extends State<MapPage> {
               options: MapOptions(
                 initialCenter: _initialCenter,
                 initialZoom: _initialZoom,
-                // --- UPDATED ZOOM LEVELS ---
                 minZoom: 14.0,
                 maxZoom: 18.0,
                 cameraConstraint: CameraConstraint.contain(bounds: _mapBounds),
@@ -165,7 +199,6 @@ class _MapPageState extends State<MapPage> {
               children: [
                 TileLayer(
                   tileProvider: _tileProvider,
-                  // --- UPDATED NATIVE ZOOM ---
                   minNativeZoom: 14,
                   maxNativeZoom: 18,
                   errorTileCallback: (tile, error, stackTrace) {},
@@ -187,6 +220,8 @@ class _MapPageState extends State<MapPage> {
                     markers: _buildIconMarkers(),
                   ),
                 ],
+
+                _buildAttributionWidget(),
               ],
             ),
     );
