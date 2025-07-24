@@ -20,7 +20,7 @@
       "cat": "retail",
       "address": {
         "string": "12 Anchor Lane",
-        "lat": -41.27054237930752
+        "lat": -41.27054237930752,
         "long": 173.28266171391957
       },
       "logo": "images/harbor_books_logo.png",
