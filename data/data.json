@@ -20,8 +20,8 @@
       "cat": "retail",
       "address": {
         "string": "12 Anchor Lane",
-        "lat": -41.274200000,
-        "long": 173.283700000
+        "lat": -41.27054237930752
+        "long": 173.28266171391957
       },
       "logo": "images/harbor_books_logo.png",
       "icon": "images/harbor_books_icon.png",
@@ -35,8 +35,8 @@
       "cat": "service",
       "address": {
         "string": "7 Marine Drive",
-        "lat": -41.274800000,
-        "long": 173.283300000
+        "lat": -41.27345212120371,
+        "long": 173.2865331795821
       },
       "logo": "images/seaview_dental_logo.png",
       "icon": "images/seaview_dental_icon.png",
@@ -65,8 +65,8 @@
       "cat": "retail",
       "address": {
         "string": "3 Bayview Street",
-        "lat": -41.274100000,
-        "long": 173.283400000
+        "lat": -41.26555731395865,
+        "long": 173.27964991345445
       },
       "logo": "images/coastal_crafts_logo.png",
       "icon": "images/coastal_crafts_icon.png",
@@ -80,8 +80,8 @@
       "cat": "service",
       "address": {
         "string": "18 Dockside Avenue",
-        "lat": -41.273900000,
-        "long": 173.283600000
+        "lat": -41.27209482710123,
+        "long": 173.28488214837395
       },
       "logo": "images/harbor_wellness_logo.png",
       "icon": "images/harbor_wellness_icon.png",
