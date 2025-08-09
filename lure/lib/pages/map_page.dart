@@ -1,4 +1,4 @@
-/ lib/pages/map_page.dart
+// lib/pages/map_page.dart
 
 import 'dart:io';
 import 'package:flutter/material.dart';
