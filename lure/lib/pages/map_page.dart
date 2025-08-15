@@ -169,7 +169,7 @@ class _MapPageState extends State<MapPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Nelson Loyalty')),
+      appBar: AppBar(title: const Text('Shop Nelson')),
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
