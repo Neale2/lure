@@ -39,6 +39,7 @@ dependencies:
     git:
       url: https://github.com/lpongetti/flutter_map_marker_cluster.git
       ref: master
+  flutter_native_splash: ^2.4.6
 
 dependency_overrides:
   flutter_map:
@@ -100,6 +101,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/icon/app_icon.png
+
 
 flutter_icons:
   android: true
