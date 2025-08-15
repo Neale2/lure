@@ -60,7 +60,7 @@ class _CardsPageState extends State<CardsPage> {
     return Scaffold(
       // --- UPDATED ---
       appBar: AppBar(
-        title: const Text("Nelson Loyalty"),
+        title: const Text("Shop Nelson"),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
