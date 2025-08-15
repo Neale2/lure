@@ -16,21 +16,6 @@
       "message": "We have a 10% discount on Saturdays!"
     },
     {
-      "name": "Harbor Books",
-      "cat": "retail",
-      "address": {
-        "string": "12 Anchor Lane",
-        "lat": -41.27054237930752,
-        "long": 173.28266171391957
-      },
-      "logo": "images/harbor_books_logo.png",
-      "icon": "images/harbor_books_icon.png",
-      "background": "images/harbor_books_background.png",
-      "text_colour": "#333333",
-      "card_colour": "#f4e842",
-      "message": "Buy one, get one free on all fiction titles this week."
-    },
-    {
       "name": "Seaview Dental",
       "cat": "service",
       "address": {
