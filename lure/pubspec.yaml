@@ -105,7 +105,7 @@ flutter:
 
 flutter_native_splash:
   color: "#ffffff"
-  image: assets/icon/app_icon.png
+  image: "assets/icon/app_icon.png"
 
 
 flutter_icons:
